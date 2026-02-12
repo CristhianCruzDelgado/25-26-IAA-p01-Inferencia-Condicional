@@ -112,43 +112,53 @@ bool generarDistribucionAleatoria(std::vector<double>& p, int& N) {
 
 /* 3. */
 
-void seleccionarVariablesCondicionales(int& maskC, int& valC, int N) {
+bool seleccionarVariablesCondicionales(int& maskC, int& valC, int N) {
   std::cout << "\n¿Cuántas variables condicionales quiere seleccionar?\n";
   int variables_condicionales;    
   std::cin >> variables_condicionales;
   std::cout << "\nA continuación se le pedirá que introduzca " << variables_condicionales 
-            << " variable/s una a una indique el índice de la variable condicionada (1 a " 
+            << " variable/s una a una, indique el índice de la variable condicionada (1 a " 
             << N << ") y su valor (0 o 1) separado por un espacio.\n\n";
     
   for (int i = 0; i < variables_condicionales; ++i) {
     std::cout << "Variable valor: ";
     int variable, valor;
     std::cin >> variable >> valor;
+    if (variable > N || (valor != 0 && valor != 1)) {
+      std::cerr << "Error al seleccionar variable condicionada, debe estar entre 1-" << N << " y con valor 0 o 1." << std::endl;
+      return false;
+    }
     --variable;
     
     // Activamos el bit correspondiente a la posición de la variable
     maskC |= (1 << variable);
     if (valor == 1) valC |= (1 << variable);
   }
+  return true;
 }
 
-void seleccionarVariablesInteres(int& maskI, int N) {
+bool seleccionarVariablesInteres(int& maskI, int N) {
   std::cout << "\n¿Cuántas variables de interés quiere seleccionar?\n";
   int variables_interes;    
   std::cin >> variables_interes;
   std::cout << "\nA continuación se le pedirá que introduzca " << variables_interes 
-            << " variable/s una a una indique el índice de la variable de interés (1 a " 
+            << " variable/s una a una, indique el índice de la variable de interés (1 a " 
             << N << ").\n\n";
     
   for (int i = 0; i < variables_interes; ++i) {
     int variable;
     std::cout << "Variable: ";
     std::cin >> variable;
+    if (variable > N) {
+      std::cerr << "Error al seleccionar variable condicionada, debe estar entre 1-" << N << std::endl;
+      return false;
+    }
     --variable;
 
     // Activamos el bit correspondiente a la posición de la variable
     maskI |= (1 << variable);
   }
+  return true;
 }
 
 /* 5. */
@@ -240,8 +250,8 @@ int main() {
   int valC = 0;
   int maskI = 0;
 
-  seleccionarVariablesCondicionales(maskC, valC, N);
-  seleccionarVariablesInteres(maskI, N);
+  if (!(seleccionarVariablesCondicionales(maskC, valC, N))) return 1;
+  if (!(seleccionarVariablesInteres(maskI, N))) return 1;
 
   /* 5. Función principal del cálculo */
   /* 7. Estudio del tiempo de ejecución */
@@ -249,8 +259,8 @@ int main() {
   std::chrono::high_resolution_clock::time_point beg = std::chrono::high_resolution_clock::now();
   std::vector<double> p_condicionada = calcularProbabilidadCondicional(p, N, maskC, valC, maskI);
   std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
-  std::chrono::nanoseconds ns = std::chrono::duration_cast<std::chrono::nanoseconds>(end - beg);
-  std::cout << "\nEl tiempo de ejecución han sido: " << ns.count() << " ns\n";
+  std::chrono::microseconds µs = std::chrono::duration_cast<std::chrono::microseconds>(end - beg);
+  std::cout << "\nEl tiempo de ejecución han sido: " << µs.count() << " µs\n";
 
   /* 6. Salida del programa */
 
