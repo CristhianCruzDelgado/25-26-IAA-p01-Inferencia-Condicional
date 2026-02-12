@@ -260,11 +260,10 @@ int main() {
   std::vector<double> p_condicionada = calcularProbabilidadCondicional(p, N, maskC, valC, maskI);
   std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
   std::chrono::microseconds µs = std::chrono::duration_cast<std::chrono::microseconds>(end - beg);
-  std::cout << "\nEl tiempo de ejecución han sido: " << µs.count() << " µs\n";
 
   /* 6. Salida del programa */
 
-  std::cout << "\nEste tiempo ha tomado sobre la distribución de probabilidad:\n";
+  std::cout << "\nDistribución conjunta:\n";
 
   for (int i = 0; i < p.size(); ++i) {
     std::bitset<32> all_bits(i);
@@ -281,6 +280,8 @@ int main() {
   for (int i = 0; i < p_condicionada.size(); ++i) {
     std::cout << p_condicionada[i] << '\n';
   }
+
+  std::cout << "\nEl tiempo de ejecución han sido: " << µs.count() << " µs\n";
 
   std::cout << '\n';
 
